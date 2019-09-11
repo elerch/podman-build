@@ -30,6 +30,10 @@ $HOME/.local path. Note that $HOME/.local/bin/fusermount3 will be owned by
 root, executable with setuid bit set. This is normal/expected and needed
 for overlayfs to work on rootless containers.
 
+Alternatively, this build has been completed and the results uploaded as
+a tarball as a release on github. Beware that files in the tarball will
+overwrite files on extraction, but if you're looking for the easy button,
+download the podman.tgz from the repo release and ``tar -C $HOME xzf podman.tgz``
 
 Other Host Setup
 ----------------

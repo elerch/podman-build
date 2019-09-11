@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Take all arguments
+# Except LIBPOD_BASE
+# Normalize them, then pass through sort and unique. We want to make sure
+# that the comments at the top match the actual arguments down below...
+#
+# From there, we'll remove 'ARG', convert equals/underscores to spaces and lowercase them
+grep "ARG " Dockerfile | \
+  grep -v "LIBPOD_BASE" | \
+  sed 's/^# //'|sort|uniq| \
+  cut -d' ' -f2|sed 's/[=_]/ /g'|tr '[:upper:]' '[:lower:]'

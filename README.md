@@ -21,9 +21,9 @@ related components for use in a rootless environment. This includes:
 Usage
 -----
 
-After cloning the repo, run ``docker build -t podmanbuilder``. After the
+After cloning the repo, run ``docker build -t podman-builder .``. After the
 multi-stage build completes (this could take a while), run
-``docker run --rm -v $HOME:/home podmanbuilder $(id -u) $(id -g)``. This
+``docker run --rm -v $HOME:/home podman-build $(id -u) $(id -g)``. This
 command will mount your home directory into the container, allowing the
 rootless-install.sh entrypoint to copy all the files into place in your
 $HOME/.local path. Note that $HOME/.local/bin/fusermount3 will be owned by

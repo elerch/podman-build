@@ -14,6 +14,8 @@ FROM debian:buster-slim AS build-base
 
 # Build base: automake through libcap-dev is specific to slirp4netns
 RUN true && \
+    echo 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20190822T033017Z/ buster main' \
+         > /etc/apt/sources.list && \
     apt-get update && apt-get --no-install-recommends -y install \
       libglib2.0-dev=2.58.3-2 \
       git=1:2.20.1-2 \
@@ -125,7 +127,10 @@ ARG LIBPOD_VERSION=v1.5.1
 
 # golang-go \
       #libbtrfs-dev= \
-RUN apt-get update && apt-get --no-install-recommends -y install \
+RUN true && \
+    echo 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20190822T033017Z/ stretch main' \
+      > /etc/apt/sources.list && \
+    apt-get update && apt-get --no-install-recommends -y install \
       git=1:2.11.0-3+deb9u4 \
       libc6-dev=2.24-11+deb9u4 \
       pkg-config=0.29-4+b1 \

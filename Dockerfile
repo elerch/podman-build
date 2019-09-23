@@ -121,6 +121,44 @@ ARG RUNC_VERSION=v1.0.0-rc8
 ADD https://github.com/opencontainers/runc/releases/download/${RUNC_VERSION}/runc.amd64 /runc
 
 # Build podman - minimum requirement will be glibc 2.24
+FROM golang:1.12.9-stretch AS buildah
+
+ARG BUILDAH_VERSION=v1.11.0
+
+# golang-go \
+      #libbtrfs-dev= \
+RUN true && \
+    echo 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20190822T033017Z/ stretch main' \
+      > /etc/apt/sources.list && \
+    apt-get update && apt-get --no-install-recommends -y install \
+      git=1:2.11.0-3+deb9u4 \
+      go-md2man=1.0.6+ds-1+b1 \
+      libassuan-dev=2.4.3-2 \
+      libglib2.0-dev=2.50.3-2 \
+      libgpgme-dev=1.8.0-3+b2 \
+      libgpg-error-dev=1.26-2 \
+      btrfs-progs=4.7.3-1 \
+      libostree-dev=2016.15-5 \
+      libseccomp-dev=2.3.1-2.1+deb9u1 \
+      libdevmapper-dev=2:1.02.137-2 \
+      libselinux1-dev=2.6-3+b3 \
+    && rm -rf /var/lib/apt/lists/* && \
+    git clone --no-checkout https://github.com/containers/buildah/ "$GOPATH/src/github.com/containers/buildah"
+
+WORKDIR $GOPATH/src/github.com/containers/buildah
+
+RUN true && \
+    git checkout "${BUILDAH_VERSION}" && \
+    make && make install
+
+# install -D -m0755 buildah //usr/local/bin/buildah
+# make -C docs install
+# make[1]: Entering directory '/go/src/github.com/containers/buildah/docs'
+# install -d //usr/local/share/man/man1
+# install -m 0644 buildah*.1 //usr/local/share/man/man1
+
+
+# Build podman - minimum requirement will be glibc 2.24
 FROM golang:1.12.9-stretch AS podman
 
 ARG LIBPOD_VERSION=v1.5.1
@@ -185,6 +223,8 @@ COPY --from=fuse-overlayfs /usr/lib/pkgconfig/fuse3.pc                          
 COPY --from=fuse-overlayfs /fuse-overlayfs/fuse-overlayfs.1                       /pd/usr/share/man/man1/
 COPY --from=fuse-overlayfs /fuse-overlayfs/fuse-overlayfs                         /pd/usr/bin/
 COPY --from=runc           /runc                                                  /pd/usr/bin/
+COPY --from=buildah        /usr/local/share/man/man1/buildah*.1                   /pd/usr/share/man/man1/
+COPY --from=buildah        /usr/local/bin/buildah                                 /pd/usr/bin/
 COPY --from=podman         ${LIBPOD_BASE}/bin/podman                              /pd/usr/bin/
 COPY --from=podman         ${LIBPOD_BASE}/bin/podman-remote                       /pd/usr/bin/
 COPY --from=podman         ${LIBPOD_BASE}/docs/links/*                            /pd/usr/share/man/man1/

@@ -11,6 +11,7 @@ FROM debian:buster-slim AS build-base
 # ARG RUNC_VERSION=v1.0.0-rc8
 # ARG LIBPOD_VERSION=v1.5.1
 # ARG CNI_VERSION=v0.8.2
+# ARG BUILDAH_VERSION=v1.11.0
 
 # Build base: automake through libcap-dev is specific to slirp4netns
 RUN true && \

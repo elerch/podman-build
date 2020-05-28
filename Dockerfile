@@ -1,4 +1,4 @@
-FROM debian:buster-slim AS build-base
+FROM debian:buster-20190812-slim AS build-base
 
 # WARNING: ARGS get cleared after FROM, so this list is worthless. Define these
 #          below: https://github.com/moby/moby/issues/34129
@@ -132,6 +132,7 @@ RUN true && \
     echo 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20190822T033017Z/ stretch main' \
       > /etc/apt/sources.list && \
     apt-get update && apt-get --no-install-recommends -y install \
+      --allow-downgrades \
       git=1:2.11.0-3+deb9u4 \
       go-md2man=1.0.6+ds-1+b1 \
       libassuan-dev=2.4.3-2 \
@@ -143,6 +144,8 @@ RUN true && \
       libseccomp-dev=2.3.1-2.1+deb9u1 \
       libdevmapper-dev=2:1.02.137-2 \
       libselinux1-dev=2.6-3+b3 \
+      libglib2.0-0=2.50.3-2 \
+      libudev1=232-25+deb9u11 \
     && rm -rf /var/lib/apt/lists/* && \
     git clone --no-checkout https://github.com/containers/buildah/ "$GOPATH/src/github.com/containers/buildah"
 
@@ -170,6 +173,7 @@ RUN true && \
     echo 'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20190822T033017Z/ stretch main' \
       > /etc/apt/sources.list && \
     apt-get update && apt-get --no-install-recommends -y install \
+      --allow-downgrades \
       git=1:2.11.0-3+deb9u4 \
       libc6-dev=2.24-11+deb9u4 \
       pkg-config=0.29-4+b1 \
@@ -188,6 +192,9 @@ RUN true && \
       libselinux1-dev=2.6-3+b3 \
       libsystemd-dev=232-25+deb9u11 \
       uidmap=1:4.4-4.1 \
+      libglib2.0-0=2.50.3-2 \
+      libudev1=232-25+deb9u11 \
+      libsystemd0=232-25+deb9u11 \
     && rm -rf /var/lib/apt/lists/* && \
     echo 'uidmap must be installed on host' && \
     git clone https://github.com/containers/libpod/ "$GOPATH/src/github.com/containers/libpod"
